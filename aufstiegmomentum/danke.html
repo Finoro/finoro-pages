@@ -1,0 +1,179 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Aufstieg Momentum — Fast geschafft</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,700;1,400&family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans:wght@300;400&display=swap');
+
+  :root {
+    --black : #080808;
+    --dark  : #0D1B2A;
+    --accent: #F4A825;
+    --accent-dim: rgba(244,168,37,0.1);
+    --cream : #f0ece4;
+    --grey  : #666;
+    --line  : #1a2535;
+  }
+
+  * { margin:0; padding:0; box-sizing:border-box; }
+
+  body {
+    background: var(--black);
+    color: var(--cream);
+    font-family: 'IBM Plex Sans', sans-serif;
+    font-weight: 300;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 40px 24px;
+  }
+
+  .card {
+    max-width: 520px;
+    width: 100%;
+    text-align: center;
+  }
+
+  .brand {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 11px;
+    letter-spacing: 0.3em;
+    color: var(--accent);
+    text-transform: uppercase;
+    margin-bottom: 48px;
+  }
+
+  .status-icon {
+    width: 72px;
+    height: 72px;
+    border: 1px solid var(--accent);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0 auto 32px;
+    font-size: 28px;
+    color: var(--accent);
+  }
+
+  h1 {
+    font-family: 'Playfair Display', serif;
+    font-size: clamp(28px, 5vw, 44px);
+    font-weight: 700;
+    line-height: 1.1;
+    margin-bottom: 16px;
+  }
+
+  h1 em { font-style: italic; color: var(--accent); }
+
+  .subtitle {
+    font-size: 15px;
+    color: var(--grey);
+    line-height: 1.7;
+    margin-bottom: 40px;
+    max-width: 400px;
+    margin-left: auto;
+    margin-right: auto;
+  }
+
+  .divider { height: 1px; background: var(--line); margin: 40px 0; }
+
+  .steps { text-align: left; margin-bottom: 40px; }
+
+  .steps-label {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 9px;
+    letter-spacing: 0.3em;
+    color: var(--accent);
+    text-transform: uppercase;
+    margin-bottom: 20px;
+    text-align: center;
+  }
+
+  .step { display: flex; gap: 16px; align-items: flex-start; margin-bottom: 16px; }
+
+  .step-num {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 10px;
+    color: var(--accent);
+    min-width: 20px;
+    padding-top: 3px;
+  }
+
+  .step-text { font-size: 13px; color: #a09890; line-height: 1.6; }
+  .step-text strong { color: var(--cream); font-weight: 400; }
+
+  .social { display: flex; gap: 16px; justify-content: center; margin-bottom: 40px; }
+
+  .social-link {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 11px;
+    letter-spacing: 0.15em;
+    color: var(--accent);
+    text-decoration: none;
+    border: 1px solid rgba(244,168,37,0.3);
+    padding: 12px 20px;
+    transition: border-color 0.2s, background 0.2s;
+  }
+
+  .social-link:hover {
+    border-color: var(--accent);
+    background: var(--accent-dim);
+  }
+
+  .fine {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 10px;
+    color: #333;
+    letter-spacing: 0.1em;
+  }
+
+  @keyframes fadeUp {
+    from { opacity:0; transform: translateY(16px); }
+    to   { opacity:1; transform: translateY(0); }
+  }
+  .card { animation: fadeUp 0.5s ease both; }
+</style>
+</head>
+<body>
+
+<div class="card">
+  <div class="brand">Aufstieg Momentum</div>
+  <div class="status-icon">✉</div>
+  <h1>Fast geschafft.<br><em>Ein Klick fehlt noch.</em></h1>
+  <p class="subtitle">
+    Wir haben dir eine Bestätigungs-E-Mail geschickt. Bestätige deine Adresse — dann startet deine 7-Tage Routine sofort.
+  </p>
+
+  <div class="divider"></div>
+
+  <div class="steps">
+    <div class="steps-label">Nächste Schritte</div>
+    <div class="step">
+      <div class="step-num">01</div>
+      <div class="step-text"><strong>Postfach öffnen</strong> — die Bestätigungs-E-Mail ist soeben bei dir eingetroffen.</div>
+    </div>
+    <div class="step">
+      <div class="step-num">02</div>
+      <div class="step-text"><strong>Link klicken</strong> — ein einziger Klick. Dann kommt die 7-Tage Routine direkt zu dir.</div>
+    </div>
+    <div class="step">
+      <div class="step-num">03</div>
+      <div class="step-text"><strong>Spam prüfen</strong> — falls die Mail nicht ankommt, kurz im Spam-Ordner schauen und als "Kein Spam" markieren.</div>
+    </div>
+  </div>
+
+  <div class="social">
+    <a href="https://threads.net/@aufstiegmomentum" class="social-link">Threads folgen</a>
+    <a href="https://instagram.com/aufstiegmomentum" class="social-link">Instagram folgen</a>
+  </div>
+
+  <p class="fine">threads.net/@aufstiegmomentum · instagram.com/aufstiegmomentum</p>
+</div>
+
+</body>
+</html>

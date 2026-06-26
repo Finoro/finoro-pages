@@ -1,0 +1,622 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Aufstieg Momentum — Jeden Morgen neu starten</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;1,400&family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans:wght@300;400;500&display=swap');
+
+  :root {
+    --black: #080808;
+    --dark: #0D1B2A;
+    --gold: #F4A825;
+    --gold-light: #FFD070;
+    --gold-dim: rgba(244,168,37,0.12);
+    --orange: #E8621A;
+    --cream: #f0ece4;
+    --grey: #666;
+    --muted: #444;
+    --line: #1a2535;
+    --accent: #F4A825;
+    --accent-light: #FFD070;
+    --accent-dim: rgba(244,168,37,0.15);
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  html { scroll-behavior: smooth; }
+
+  body {
+    background: var(--black);
+    color: var(--cream);
+    font-family: 'IBM Plex Sans', sans-serif;
+    font-weight: 300;
+    line-height: 1.6;
+    overflow-x: hidden;
+  }
+
+  /* ── NAV ──────────────────────────────── */
+  nav {
+    position: fixed;
+    top: 0; left: 0; right: 0;
+    z-index: 100;
+    padding: 20px 40px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-bottom: 1px solid rgba(255,255,255,0.04);
+    background: rgba(8,8,8,0.92);
+    backdrop-filter: blur(12px);
+  }
+
+  .nav-brand {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 12px;
+    letter-spacing: 0.25em;
+    color: var(--accent);
+    text-transform: uppercase;
+  }
+
+  .nav-claim {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 10px;
+    color: var(--grey);
+    letter-spacing: 0.15em;
+  }
+
+  /* ── HERO ─────────────────────────────── */
+  .hero {
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    padding: 120px 40px 80px;
+    max-width: 900px;
+    margin: 0 auto;
+    position: relative;
+  }
+
+  .hero::before {
+    content: '';
+    position: fixed;
+    top: 0; right: 0;
+    width: 40vw;
+    height: 100vh;
+    background: radial-gradient(ellipse at 80% 20%, rgba(244,168,37,0.07) 0%, rgba(232,98,26,0.03) 50%, transparent 70%);
+    pointer-events: none;
+  }
+
+  .hero-tag {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 10px;
+    letter-spacing: 0.3em;
+    color: var(--accent);
+    text-transform: uppercase;
+    margin-bottom: 32px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+
+  .hero-tag::before {
+    content: '';
+    display: block;
+    width: 32px;
+    height: 1px;
+    background: var(--accent);
+  }
+
+  .hero h1 {
+    font-family: 'Playfair Display', serif;
+    font-size: clamp(44px, 7vw, 88px);
+    font-weight: 700;
+    line-height: 1.0;
+    letter-spacing: -0.03em;
+    margin-bottom: 8px;
+  }
+
+  .hero h1 em {
+    font-style: italic;
+    color: var(--accent);
+  }
+
+  .hero-sub {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 13px;
+    color: var(--grey);
+    letter-spacing: 0.1em;
+    margin-top: 20px;
+    margin-bottom: 40px;
+  }
+
+  .hero-premise {
+    max-width: 540px;
+    font-size: 16px;
+    line-height: 1.75;
+    color: #a09890;
+    margin-bottom: 56px;
+    border-left: 2px solid var(--accent);
+    padding-left: 24px;
+  }
+
+  /* ── FORM ─────────────────────────────── */
+  .form-block { max-width: 480px; }
+
+  .form-label {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 10px;
+    letter-spacing: 0.2em;
+    color: var(--grey);
+    text-transform: uppercase;
+    margin-bottom: 12px;
+  }
+
+  .input-row {
+    display: flex;
+    gap: 0;
+    border: 1px solid var(--muted);
+    transition: border-color 0.2s;
+  }
+
+  .input-row:focus-within { border-color: var(--accent); }
+
+  .input-row input {
+    flex: 1;
+    background: transparent;
+    border: none;
+    outline: none;
+    padding: 16px 20px;
+    color: var(--cream);
+    font-family: 'IBM Plex Sans', sans-serif;
+    font-size: 14px;
+    font-weight: 300;
+  }
+
+  .input-row input::placeholder { color: var(--muted); }
+
+  .btn-submit {
+    background: var(--accent);
+    color: var(--black);
+    border: none;
+    padding: 16px 28px;
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 11px;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    cursor: pointer;
+    transition: background 0.2s;
+    white-space: nowrap;
+    font-weight: 500;
+  }
+
+  .btn-submit:hover { background: var(--accent-light); }
+
+  .form-fine {
+    margin-top: 12px;
+    font-size: 11px;
+    color: var(--muted);
+    font-family: 'IBM Plex Mono', monospace;
+    letter-spacing: 0.05em;
+  }
+
+  /* ── DIVIDER ──────────────────────────── */
+  .divider {
+    max-width: 900px;
+    margin: 0 auto;
+    padding: 0 40px;
+    border-top: 1px solid var(--line);
+  }
+
+  /* ── SECTIONS ─────────────────────────── */
+  .section {
+    max-width: 900px;
+    margin: 0 auto;
+    padding: 80px 40px;
+  }
+
+  .section-tag {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 10px;
+    letter-spacing: 0.3em;
+    color: var(--accent);
+    text-transform: uppercase;
+    margin-bottom: 40px;
+  }
+
+  .content-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 2px;
+  }
+
+  .content-item {
+    background: var(--dark);
+    padding: 32px;
+    border: 1px solid var(--line);
+  }
+
+  .item-day {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 10px;
+    letter-spacing: 0.2em;
+    color: var(--grey);
+    text-transform: uppercase;
+    margin-bottom: 12px;
+  }
+
+  .item-title {
+    font-family: 'Playfair Display', serif;
+    font-size: 18px;
+    color: var(--cream);
+    margin-bottom: 8px;
+    line-height: 1.3;
+  }
+
+  .item-desc {
+    font-size: 13px;
+    color: #706860;
+    line-height: 1.6;
+  }
+
+  /* ── PROOF ────────────────────────────── */
+  .proof {
+    background: var(--dark);
+    border-top: 1px solid var(--line);
+    border-bottom: 1px solid var(--line);
+  }
+
+  .proof-inner {
+    max-width: 900px;
+    margin: 0 auto;
+    padding: 80px 40px;
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 48px;
+  }
+
+  .stat-num {
+    font-family: 'Playfair Display', serif;
+    font-size: 56px;
+    font-weight: 700;
+    color: var(--accent);
+    line-height: 1;
+    margin-bottom: 12px;
+  }
+
+  .stat-label {
+    font-size: 13px;
+    color: #706860;
+    line-height: 1.6;
+  }
+
+  /* ── PRINCIPLES ───────────────────────── */
+  .principles-block {
+    max-width: 900px;
+    margin: 0 auto;
+    padding: 80px 40px;
+  }
+
+  .principle {
+    display: flex;
+    gap: 40px;
+    margin-bottom: 48px;
+    padding-bottom: 48px;
+    border-bottom: 1px solid var(--line);
+  }
+
+  .principle:last-child {
+    border-bottom: none;
+    margin-bottom: 0;
+    padding-bottom: 0;
+  }
+
+  .p-num {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 11px;
+    color: var(--accent);
+    letter-spacing: 0.1em;
+    min-width: 28px;
+    padding-top: 4px;
+  }
+
+  .p-title {
+    font-family: 'Playfair Display', serif;
+    font-size: 20px;
+    color: var(--cream);
+    margin-bottom: 12px;
+    line-height: 1.3;
+  }
+
+  .p-text {
+    font-size: 14px;
+    color: #706860;
+    line-height: 1.75;
+  }
+
+  /* ── BOTTOM CTA ───────────────────────── */
+  .bottom-cta {
+    background: var(--dark);
+    border-top: 1px solid var(--line);
+    border-bottom: 1px solid var(--line);
+  }
+
+  .bottom-cta-inner {
+    max-width: 900px;
+    margin: 0 auto;
+    padding: 80px 40px;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 80px;
+    align-items: center;
+  }
+
+  .cta-left h2 {
+    font-family: 'Playfair Display', serif;
+    font-size: clamp(28px, 4vw, 44px);
+    font-weight: 700;
+    line-height: 1.1;
+    letter-spacing: -0.02em;
+    margin-bottom: 16px;
+  }
+
+  .cta-left h2 em {
+    font-style: italic;
+    color: var(--accent);
+  }
+
+  .cta-left p {
+    font-size: 14px;
+    color: var(--grey);
+    line-height: 1.7;
+  }
+
+  /* ── FOOTER ───────────────────────────── */
+  footer {
+    border-top: 1px solid var(--line);
+    padding: 24px 40px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    max-width: 900px;
+    margin: 0 auto;
+  }
+
+  .footer-brand {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 10px;
+    color: var(--accent);
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+  }
+
+  .footer-links {
+    display: flex;
+    gap: 24px;
+  }
+
+  .footer-links a {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 10px;
+    color: var(--grey);
+    text-decoration: none;
+    letter-spacing: 0.1em;
+  }
+
+  /* ── ANIMATIONS ───────────────────────── */
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(20px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+
+  .hero-tag     { animation: fadeUp 0.6s ease 0.1s both; }
+  .hero h1      { animation: fadeUp 0.6s ease 0.2s both; }
+  .hero-sub     { animation: fadeUp 0.6s ease 0.3s both; }
+  .hero-premise { animation: fadeUp 0.6s ease 0.4s both; }
+  .form-block   { animation: fadeUp 0.6s ease 0.5s both; }
+
+  /* ── RESPONSIVE ───────────────────────── */
+  @media (max-width: 640px) {
+    nav { padding: 16px 20px; }
+    .nav-claim { display: none; }
+    .hero { padding: 100px 20px 60px; }
+    .section { padding: 60px 20px; }
+    .content-grid { grid-template-columns: 1fr; }
+    .proof-inner { grid-template-columns: 1fr; gap: 32px; padding: 60px 20px; }
+    .bottom-cta-inner { grid-template-columns: 1fr; gap: 40px; padding: 60px 20px; }
+    .principles-block { padding: 60px 20px; }
+    .principle { flex-direction: column; gap: 16px; }
+    footer { padding: 20px; flex-direction: column; gap: 16px; text-align: center; }
+    .input-row { flex-direction: column; }
+    .btn-submit { padding: 14px; text-align: center; }
+  }
+</style>
+</head>
+<body>
+
+<nav>
+  <div class="nav-brand">Aufstieg Momentum</div>
+  <div class="nav-claim">Jeden Morgen höher.</div>
+</nav>
+
+<!-- HERO -->
+<section class="hero">
+  <div class="hero-tag">Kostenlose 7-Tage Energie-Routine</div>
+  <h1>Jeden Morgen<br>neu <em>aufsteigen.</em></h1>
+  <div class="hero-sub">7-Tage Morgen-Routine — kostenlos herunterladen</div>
+  <p class="hero-premise">
+    Der Morgen entscheidet. Nicht der Abend, nicht der Montag, nicht "irgendwann". Wer die ersten Minuten des Tages besitzt, besitzt den Tag. Sieben Tage. Ein Ritual. Kein Lärm.
+  </p>
+
+  <div class="form-block" id="form-hero">
+    <div class="form-label">Deine E-Mail-Adresse</div>
+    <div class="input-row">
+      <input type="email" id="email-input" placeholder="du@beispiel.de" autocomplete="email">
+      <button class="btn-submit" onclick="handleSubmit()">Jetzt starten</button>
+    </div>
+    <div class="form-fine">Kein Spam. Kein Verkauf. Nur Momentum.</div>
+  </div>
+</section>
+
+<div class="divider"></div>
+
+<!-- WHAT YOU GET -->
+<section class="section">
+  <div class="section-tag">7 Tage — 7 Impulse</div>
+  <div class="content-grid">
+    <div class="content-item">
+      <div class="item-day">Tag 1 — Ankerpunkt</div>
+      <div class="item-title">Definiere deinen Morgen</div>
+      <div class="item-desc">Bevor der Tag dich definiert, definierst du ihn. Ein konkreter Entschluss — bevor das Telefon aufgeht.</div>
+    </div>
+    <div class="content-item">
+      <div class="item-day">Tag 2 — Körper zuerst</div>
+      <div class="item-title">Bewegung als Signal</div>
+      <div class="item-desc">Fünf Minuten Bewegung senden dem Gehirn ein Signal: Heute wird gehandelt. Nicht gedacht. Gehandelt.</div>
+    </div>
+    <div class="content-item">
+      <div class="item-day">Tag 3 — Stille nutzen</div>
+      <div class="item-title">Bevor der Feed beginnt</div>
+      <div class="item-desc">Zehn Minuten ohne Bildschirm. Klingt wenig. Ist mehr als die meisten je schaffen. Probier es aus.</div>
+    </div>
+    <div class="content-item">
+      <div class="item-day">Tag 4–7</div>
+      <div class="item-title">Energie. Fokus. Absicht. System.</div>
+      <div class="item-desc">Baue das Ritual Schritt für Schritt auf. Am Ende der Woche ist es kein Aufwand mehr — es ist dein Standard.</div>
+    </div>
+  </div>
+</section>
+
+<!-- PROOF -->
+<div class="proof">
+  <div class="proof-inner">
+    <div class="stat">
+      <div class="stat-num">7</div>
+      <div class="stat-label">Tage bis das Ritual beginnt, sich natürlich anzufühlen — nicht wie Disziplin</div>
+    </div>
+    <div class="stat">
+      <div class="stat-num">23'</div>
+      <div class="stat-label">So lang dauert es, den Fokus nach einer Ablenkung am Morgen wiederzufinden</div>
+    </div>
+    <div class="stat">
+      <div class="stat-num">1°</div>
+      <div class="stat-label">Jeden Morgen ein Grad besser. Nach einem Jahr bist du nicht wiederzuerkennen.</div>
+    </div>
+  </div>
+</div>
+
+<!-- PRINCIPLES -->
+<div class="principles-block">
+  <div class="section-tag">Die Grundsätze</div>
+
+  <div class="principle">
+    <div class="p-num">01</div>
+    <div class="p-content">
+      <div class="p-title">Der Morgen gehört dir — wenn du ihn beanspruchst.</div>
+      <p class="p-text">Bevor die Welt ihre Anforderungen stellt, gibt es einen Moment der nur dir gehört. Die meisten lassen ihn verstreichen. Wer ihn beansprucht, trägt einen Vorteil in jeden Tag.</p>
+    </div>
+  </div>
+
+  <div class="principle">
+    <div class="p-num">02</div>
+    <div class="p-content">
+      <div class="p-title">Konstanz schlägt Intensität. Immer.</div>
+      <p class="p-text">Ein Morgenritual das du zehn Minuten täglich durchhältst, ist mächtiger als ein zweistündiges das du nach drei Tagen aufgibst. Klein. Täglich. Unaufhaltsam.</p>
+    </div>
+  </div>
+
+  <div class="principle">
+    <div class="p-num">03</div>
+    <div class="p-content">
+      <div class="p-title">Aufstieg ist kein Zustand. Es ist eine Richtung.</div>
+      <p class="p-text">Es geht nicht darum oben anzukommen. Es geht darum, jeden Tag in Bewegung zu sein — nach oben. Das Tal gehört dazu. Der Weg auch. Der nächste Schritt immer.</p>
+    </div>
+  </div>
+</div>
+
+<!-- BOTTOM CTA -->
+<div class="bottom-cta">
+  <div class="bottom-cta-inner">
+    <div class="cta-left">
+      <h2>Hol dir die Routine.<br><em>Kostenlos.</em></h2>
+      <p>Sieben Tage. Ein Impuls täglich. Kein Upsell, kein Funnel — nur der Aufstieg.</p>
+    </div>
+    <div class="form-block" id="form-bottom">
+      <div class="form-label">Deine E-Mail-Adresse</div>
+      <div class="input-row">
+        <input type="email" id="email-input-2" placeholder="du@beispiel.de" autocomplete="email">
+        <button class="btn-submit" onclick="handleSubmit2()">Jetzt starten</button>
+      </div>
+      <div class="form-fine">Double Opt-in. Kein Spam. Abmeldung jederzeit.</div>
+    </div>
+  </div>
+</div>
+
+<footer>
+  <div class="footer-brand">Aufstieg Momentum</div>
+  <div class="footer-links">
+    <a href="https://threads.net/@aufstiegmomentum">Threads</a>
+    <a href="https://instagram.com/aufstiegmomentum">Instagram</a>
+    <a href="/aufstiegmomentum/datenschutz">Datenschutz</a>
+    <a href="/aufstiegmomentum/impressum">Impressum</a>
+  </div>
+</footer>
+
+<script>
+const WEBHOOK_URL = 'https://n8n.finoro.ch/webhook/lead-eingang';
+const SLUG = 'aufstiegmomentum';
+
+async function submitEmail(email, formEl) {
+  if (!email || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+    const input = formEl.querySelector('input');
+    input.style.outline = '1px solid #c84a4a';
+    input.focus();
+    return;
+  }
+
+  const btn = formEl.querySelector('.btn-submit');
+  const input = formEl.querySelector('input');
+  btn.textContent = '...';
+  btn.disabled = true;
+  input.disabled = true;
+
+  try {
+    await fetch(WEBHOOK_URL, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ email: email.trim().toLowerCase(), slug: SLUG })
+    });
+
+    formEl.innerHTML = `
+      <div style="border:1px solid #F4A825;background:rgba(244,168,37,0.08);padding:20px 24px;">
+        <p style="font-family:'IBM Plex Mono',monospace;font-size:12px;color:#FFD070;
+           letter-spacing:0.1em;line-height:1.6;margin:0;">
+          Bestätige deine E-Mail —<br>deine Routine wartet im Postfach.
+        </p>
+      </div>
+    `;
+  } catch (err) {
+    btn.textContent = 'Bestätigung unterwegs';
+    btn.disabled = true;
+  }
+}
+
+function handleSubmit() {
+  const input = document.getElementById('email-input');
+  submitEmail(input.value, document.getElementById('form-hero'));
+}
+
+function handleSubmit2() {
+  const input = document.getElementById('email-input-2');
+  submitEmail(input.value, document.getElementById('form-bottom'));
+}
+
+document.getElementById('email-input').addEventListener('keypress', e => {
+  if (e.key === 'Enter') handleSubmit();
+});
+document.getElementById('email-input-2').addEventListener('keypress', e => {
+  if (e.key === 'Enter') handleSubmit2();
+});
+</script>
+
+</body>
+</html>

@@ -1,0 +1,622 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Der Starkdenker — Mentale Stärke täglich</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;1,400&family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans:wght@300;400;500&display=swap');
+
+  :root {
+    --black: #080808;
+    --dark: #111;
+    --violet: #7B2FBE;
+    --violet-dim: rgba(123,47,190,0.12);
+    --teal: #00D4D4;
+    --teal-dim: rgba(0,212,212,0.08);
+    --cream: #f0ece4;
+    --grey: #666;
+    --muted: #444;
+    --line: #1e1e1e;
+    --accent: #00D4D4;
+    --accent-light: #7fffff;
+    --accent-dim: rgba(0,212,212,0.15);
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  html { scroll-behavior: smooth; }
+
+  body {
+    background: var(--black);
+    color: var(--cream);
+    font-family: 'IBM Plex Sans', sans-serif;
+    font-weight: 300;
+    line-height: 1.6;
+    overflow-x: hidden;
+  }
+
+  /* ── NAV ──────────────────────────────── */
+  nav {
+    position: fixed;
+    top: 0; left: 0; right: 0;
+    z-index: 100;
+    padding: 20px 40px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-bottom: 1px solid rgba(255,255,255,0.04);
+    background: rgba(8,8,8,0.92);
+    backdrop-filter: blur(12px);
+  }
+
+  .nav-brand {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 12px;
+    letter-spacing: 0.25em;
+    color: var(--accent);
+    text-transform: uppercase;
+  }
+
+  .nav-claim {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 10px;
+    color: var(--grey);
+    letter-spacing: 0.15em;
+  }
+
+  /* ── HERO ─────────────────────────────── */
+  .hero {
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    padding: 120px 40px 80px;
+    max-width: 900px;
+    margin: 0 auto;
+    position: relative;
+  }
+
+  .hero::before {
+    content: '';
+    position: fixed;
+    top: 0; right: 0;
+    width: 40vw;
+    height: 100vh;
+    background: radial-gradient(ellipse at 80% 30%, rgba(123,47,190,0.08) 0%, rgba(0,212,212,0.04) 50%, transparent 70%);
+    pointer-events: none;
+  }
+
+  .hero-tag {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 10px;
+    letter-spacing: 0.3em;
+    color: var(--accent);
+    text-transform: uppercase;
+    margin-bottom: 32px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+
+  .hero-tag::before {
+    content: '';
+    display: block;
+    width: 32px;
+    height: 1px;
+    background: var(--accent);
+  }
+
+  .hero h1 {
+    font-family: 'Playfair Display', serif;
+    font-size: clamp(44px, 7vw, 88px);
+    font-weight: 700;
+    line-height: 1.0;
+    letter-spacing: -0.03em;
+    margin-bottom: 8px;
+  }
+
+  .hero h1 em {
+    font-style: italic;
+    color: var(--accent);
+  }
+
+  .hero-sub {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 13px;
+    color: var(--grey);
+    letter-spacing: 0.1em;
+    margin-top: 20px;
+    margin-bottom: 40px;
+  }
+
+  .hero-premise {
+    max-width: 540px;
+    font-size: 16px;
+    line-height: 1.75;
+    color: #a09890;
+    margin-bottom: 56px;
+    border-left: 2px solid var(--accent);
+    padding-left: 24px;
+  }
+
+  /* ── FORM ─────────────────────────────── */
+  .form-block { max-width: 480px; }
+
+  .form-label {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 10px;
+    letter-spacing: 0.2em;
+    color: var(--grey);
+    text-transform: uppercase;
+    margin-bottom: 12px;
+  }
+
+  .input-row {
+    display: flex;
+    gap: 0;
+    border: 1px solid var(--muted);
+    transition: border-color 0.2s;
+  }
+
+  .input-row:focus-within { border-color: var(--accent); }
+
+  .input-row input {
+    flex: 1;
+    background: transparent;
+    border: none;
+    outline: none;
+    padding: 16px 20px;
+    color: var(--cream);
+    font-family: 'IBM Plex Sans', sans-serif;
+    font-size: 14px;
+    font-weight: 300;
+  }
+
+  .input-row input::placeholder { color: var(--muted); }
+
+  .btn-submit {
+    background: var(--accent);
+    color: var(--black);
+    border: none;
+    padding: 16px 28px;
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 11px;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    cursor: pointer;
+    transition: background 0.2s, opacity 0.2s;
+    white-space: nowrap;
+    font-weight: 500;
+  }
+
+  .btn-submit:hover { background: var(--accent-light); }
+
+  .form-fine {
+    margin-top: 12px;
+    font-size: 11px;
+    color: var(--muted);
+    font-family: 'IBM Plex Mono', monospace;
+    letter-spacing: 0.05em;
+  }
+
+  /* ── DIVIDER ──────────────────────────── */
+  .divider {
+    max-width: 900px;
+    margin: 0 auto;
+    padding: 0 40px;
+    border-top: 1px solid var(--line);
+  }
+
+  /* ── SECTIONS ─────────────────────────── */
+  .section {
+    max-width: 900px;
+    margin: 0 auto;
+    padding: 80px 40px;
+  }
+
+  .section-tag {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 10px;
+    letter-spacing: 0.3em;
+    color: var(--accent);
+    text-transform: uppercase;
+    margin-bottom: 40px;
+  }
+
+  .content-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 2px;
+  }
+
+  .content-item {
+    background: var(--dark);
+    padding: 32px;
+    border: 1px solid var(--line);
+  }
+
+  .item-day {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 10px;
+    letter-spacing: 0.2em;
+    color: var(--grey);
+    text-transform: uppercase;
+    margin-bottom: 12px;
+  }
+
+  .item-title {
+    font-family: 'Playfair Display', serif;
+    font-size: 18px;
+    color: var(--cream);
+    margin-bottom: 8px;
+    line-height: 1.3;
+  }
+
+  .item-desc {
+    font-size: 13px;
+    color: #706860;
+    line-height: 1.6;
+  }
+
+  /* ── PROOF ────────────────────────────── */
+  .proof {
+    background: var(--dark);
+    border-top: 1px solid var(--line);
+    border-bottom: 1px solid var(--line);
+  }
+
+  .proof-inner {
+    max-width: 900px;
+    margin: 0 auto;
+    padding: 80px 40px;
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 48px;
+  }
+
+  .stat-num {
+    font-family: 'Playfair Display', serif;
+    font-size: 56px;
+    font-weight: 700;
+    color: var(--accent);
+    line-height: 1;
+    margin-bottom: 12px;
+  }
+
+  .stat-label {
+    font-size: 13px;
+    color: #706860;
+    line-height: 1.6;
+  }
+
+  /* ── PRINCIPLES ───────────────────────── */
+  .principles-block {
+    max-width: 900px;
+    margin: 0 auto;
+    padding: 80px 40px;
+  }
+
+  .principle {
+    display: flex;
+    gap: 40px;
+    margin-bottom: 48px;
+    padding-bottom: 48px;
+    border-bottom: 1px solid var(--line);
+  }
+
+  .principle:last-child {
+    border-bottom: none;
+    margin-bottom: 0;
+    padding-bottom: 0;
+  }
+
+  .p-num {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 11px;
+    color: var(--accent);
+    letter-spacing: 0.1em;
+    min-width: 28px;
+    padding-top: 4px;
+  }
+
+  .p-title {
+    font-family: 'Playfair Display', serif;
+    font-size: 20px;
+    color: var(--cream);
+    margin-bottom: 12px;
+    line-height: 1.3;
+  }
+
+  .p-text {
+    font-size: 14px;
+    color: #706860;
+    line-height: 1.75;
+  }
+
+  /* ── BOTTOM CTA ───────────────────────── */
+  .bottom-cta {
+    background: var(--dark);
+    border-top: 1px solid var(--line);
+    border-bottom: 1px solid var(--line);
+  }
+
+  .bottom-cta-inner {
+    max-width: 900px;
+    margin: 0 auto;
+    padding: 80px 40px;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 80px;
+    align-items: center;
+  }
+
+  .cta-left h2 {
+    font-family: 'Playfair Display', serif;
+    font-size: clamp(28px, 4vw, 44px);
+    font-weight: 700;
+    line-height: 1.1;
+    letter-spacing: -0.02em;
+    margin-bottom: 16px;
+  }
+
+  .cta-left h2 em {
+    font-style: italic;
+    color: var(--accent);
+  }
+
+  .cta-left p {
+    font-size: 14px;
+    color: var(--grey);
+    line-height: 1.7;
+  }
+
+  /* ── FOOTER ───────────────────────────── */
+  footer {
+    border-top: 1px solid var(--line);
+    padding: 24px 40px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    max-width: 900px;
+    margin: 0 auto;
+  }
+
+  .footer-brand {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 10px;
+    color: var(--accent);
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+  }
+
+  .footer-links {
+    display: flex;
+    gap: 24px;
+  }
+
+  .footer-links a {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 10px;
+    color: var(--grey);
+    text-decoration: none;
+    letter-spacing: 0.1em;
+  }
+
+  /* ── ANIMATIONS ───────────────────────── */
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(20px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+
+  .hero-tag     { animation: fadeUp 0.6s ease 0.1s both; }
+  .hero h1      { animation: fadeUp 0.6s ease 0.2s both; }
+  .hero-sub     { animation: fadeUp 0.6s ease 0.3s both; }
+  .hero-premise { animation: fadeUp 0.6s ease 0.4s both; }
+  .form-block   { animation: fadeUp 0.6s ease 0.5s both; }
+
+  /* ── RESPONSIVE ───────────────────────── */
+  @media (max-width: 640px) {
+    nav { padding: 16px 20px; }
+    .nav-claim { display: none; }
+    .hero { padding: 100px 20px 60px; }
+    .section { padding: 60px 20px; }
+    .content-grid { grid-template-columns: 1fr; }
+    .proof-inner { grid-template-columns: 1fr; gap: 32px; padding: 60px 20px; }
+    .bottom-cta-inner { grid-template-columns: 1fr; gap: 40px; padding: 60px 20px; }
+    .principles-block { padding: 60px 20px; }
+    .principle { flex-direction: column; gap: 16px; }
+    footer { padding: 20px; flex-direction: column; gap: 16px; text-align: center; }
+    .input-row { flex-direction: column; }
+    .btn-submit { padding: 14px; text-align: center; }
+  }
+</style>
+</head>
+<body>
+
+<nav>
+  <div class="nav-brand">[DS] Der Starkdenker</div>
+  <div class="nav-claim">Mentale Stärke. Täglich.</div>
+</nav>
+
+<!-- HERO -->
+<section class="hero">
+  <div class="hero-tag">Kostenloses Morgenritual</div>
+  <h1>Dein Geist.<br>Deine <em>Waffe.</em></h1>
+  <div class="hero-sub">5-Minuten Morgenritual — kostenlos herunterladen</div>
+  <p class="hero-premise">
+    Die meisten warten auf Motivation. Starkdenker bauen Systeme. Jeden Morgen. Bevor die Welt ihre Anforderungen stellt. Fünf Minuten reichen — wenn du weisst was du tust.
+  </p>
+
+  <div class="form-block" id="form-hero">
+    <div class="form-label">Deine E-Mail-Adresse</div>
+    <div class="input-row">
+      <input type="email" id="email-input" placeholder="du@beispiel.de" autocomplete="email">
+      <button class="btn-submit" onclick="handleSubmit()">Jetzt holen</button>
+    </div>
+    <div class="form-fine">Kein Spam. Kein Verkauf. Nur Klarheit.</div>
+  </div>
+</section>
+
+<div class="divider"></div>
+
+<!-- WHAT YOU GET -->
+<section class="section">
+  <div class="section-tag">Was du bekommst</div>
+  <div class="content-grid">
+    <div class="content-item">
+      <div class="item-day">Minute 1 — Anker</div>
+      <div class="item-title">Eine Frage. Kein Scrollen.</div>
+      <div class="item-desc">Bevor du dein Telefon öffnest, beantwortest du eine einzige Frage. Sie setzt den Ton für den ganzen Tag.</div>
+    </div>
+    <div class="content-item">
+      <div class="item-day">Minute 2 — Klarheit</div>
+      <div class="item-title">Definiere den Sieg</div>
+      <div class="item-desc">Was macht diesen Tag zu einem gewonnenen Tag? Nicht zehn Dinge. Eine Sache. Konkret. Messbar.</div>
+    </div>
+    <div class="content-item">
+      <div class="item-day">Minute 3 — Blockade</div>
+      <div class="item-title">Benenne den Widerstand</div>
+      <div class="item-desc">Was wird dich heute aufhalten? Wer denkt darüber nach, bevor es passiert — ist vorbereitet.</div>
+    </div>
+    <div class="content-item">
+      <div class="item-day">Minute 4–5</div>
+      <div class="item-title">Absicht. Nicht Hoffnung.</div>
+      <div class="item-desc">Ein konkreter Entschluss. Niedergeschrieben. Kein Wunsch — eine Entscheidung. Das ist der Unterschied.</div>
+    </div>
+  </div>
+</section>
+
+<!-- PROOF -->
+<div class="proof">
+  <div class="proof-inner">
+    <div class="stat">
+      <div class="stat-num">5'</div>
+      <div class="stat-label">So viel Zeit brauchst du täglich — wenn du weisst was du tust</div>
+    </div>
+    <div class="stat">
+      <div class="stat-num">66</div>
+      <div class="stat-label">Tage bis eine neue Gewohnheit automatisch wird (UCL-Studie, 2010)</div>
+    </div>
+    <div class="stat">
+      <div class="stat-num">1</div>
+      <div class="stat-label">Entscheidung am Morgen die alles andere erleichtert — die eine, die zählt</div>
+    </div>
+  </div>
+</div>
+
+<!-- PRINCIPLES -->
+<div class="principles-block">
+  <div class="section-tag">Die Grundsätze</div>
+
+  <div class="principle">
+    <div class="p-num">01</div>
+    <div class="p-content">
+      <div class="p-title">Motivation ist ein Gefühl. Disziplin ist eine Entscheidung.</div>
+      <p class="p-text">Wer auf Motivation wartet, wartet manchmal Wochen. Wer Disziplin als Entscheidung begreift, die er einmal trifft und dann nicht mehr neu verhandelt — gewinnt jeden Morgen.</p>
+    </div>
+  </div>
+
+  <div class="principle">
+    <div class="p-num">02</div>
+    <div class="p-content">
+      <div class="p-title">Dein Gehirn ist kein Feind. Es ist untrainiert.</div>
+      <p class="p-text">Das Gehirn optimiert auf das Bekannte, auf Sicherheit, auf den geringsten Widerstand. Das ist Biologie — kein Versagen. Starkdenker trainieren die Ausnahme. Jeden Tag ein bisschen mehr.</p>
+    </div>
+  </div>
+
+  <div class="principle">
+    <div class="p-num">03</div>
+    <div class="p-content">
+      <div class="p-title">Kein Kliché. Kein Upsell. Keine leeren Worte.</div>
+      <p class="p-text">Du bekommst täglich einen Impuls — konkret, direkt, ohne Ausschmückung. Kein "Du schaffst das." Kein "Glaub an dich." Nur das, was tatsächlich funktioniert.</p>
+    </div>
+  </div>
+</div>
+
+<!-- BOTTOM CTA -->
+<div class="bottom-cta">
+  <div class="bottom-cta-inner">
+    <div class="cta-left">
+      <h2>Hol dir das Ritual.<br><em>Kostenlos.</em></h2>
+      <p>Fünf Minuten. Jeden Morgen. Kein Upsell, kein Funnel — nur das Ritual das funktioniert.</p>
+    </div>
+    <div class="form-block" id="form-bottom">
+      <div class="form-label">Deine E-Mail-Adresse</div>
+      <div class="input-row">
+        <input type="email" id="email-input-2" placeholder="du@beispiel.de" autocomplete="email">
+        <button class="btn-submit" onclick="handleSubmit2()">Jetzt holen</button>
+      </div>
+      <div class="form-fine">Double Opt-in. Kein Spam. Abmeldung jederzeit.</div>
+    </div>
+  </div>
+</div>
+
+<footer>
+  <div class="footer-brand">[DS] Der Starkdenker</div>
+  <div class="footer-links">
+    <a href="https://threads.net/@derstarkdenker">Threads</a>
+    <a href="https://instagram.com/derstarkdenker">Instagram</a>
+    <a href="/derstarkdenker/datenschutz">Datenschutz</a>
+    <a href="/derstarkdenker/impressum">Impressum</a>
+  </div>
+</footer>
+
+<script>
+const WEBHOOK_URL = 'https://n8n.finoro.ch/webhook/lead-eingang';
+const SLUG = 'derstarkdenker';
+
+async function submitEmail(email, formEl) {
+  if (!email || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+    const input = formEl.querySelector('input');
+    input.style.outline = '1px solid #c84a4a';
+    input.focus();
+    return;
+  }
+
+  const btn = formEl.querySelector('.btn-submit');
+  const input = formEl.querySelector('input');
+  btn.textContent = '...';
+  btn.disabled = true;
+  input.disabled = true;
+
+  try {
+    await fetch(WEBHOOK_URL, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ email: email.trim().toLowerCase(), slug: SLUG })
+    });
+
+    formEl.innerHTML = `
+      <div style="border:1px solid #00D4D4;background:rgba(0,212,212,0.08);padding:20px 24px;">
+        <p style="font-family:'IBM Plex Mono',monospace;font-size:12px;color:#7fffff;
+           letter-spacing:0.1em;line-height:1.6;margin:0;">
+          Bestätige deine E-Mail —<br>das Morgenritual wartet in deinem Postfach.
+        </p>
+      </div>
+    `;
+  } catch (err) {
+    btn.textContent = 'Bestätigung unterwegs';
+    btn.disabled = true;
+  }
+}
+
+function handleSubmit() {
+  const input = document.getElementById('email-input');
+  submitEmail(input.value, document.getElementById('form-hero'));
+}
+
+function handleSubmit2() {
+  const input = document.getElementById('email-input-2');
+  submitEmail(input.value, document.getElementById('form-bottom'));
+}
+
+document.getElementById('email-input').addEventListener('keypress', e => {
+  if (e.key === 'Enter') handleSubmit();
+});
+document.getElementById('email-input-2').addEventListener('keypress', e => {
+  if (e.key === 'Enter') handleSubmit2();
+});
+</script>
+
+</body>
+</html>
