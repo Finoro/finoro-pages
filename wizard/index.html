@@ -1,0 +1,685 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Ghost Engine — Setup Wizard</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@3.31.0/dist/tabler-icons.min.css">
+<style>
+  :root {
+    --bg: #0f0f0f;
+    --surface-1: #1a1a1a;
+    --surface-2: #222222;
+    --surface-3: #2a2a2a;
+    --border: rgba(255,255,255,0.08);
+    --border-strong: rgba(255,255,255,0.14);
+    --text-primary: #f0f0f0;
+    --text-secondary: #a0a0a0;
+    --text-muted: #606060;
+    --accent: #5b6ef5;
+    --accent-bg: rgba(91,110,245,0.12);
+    --accent-border: rgba(91,110,245,0.3);
+    --accent-text: #8b9ff8;
+    --pro: #9b6ef5;
+    --pro-bg: rgba(155,110,245,0.12);
+    --pro-border: rgba(155,110,245,0.3);
+    --pro-text: #bb9ff8;
+    --success: #4caf7d;
+    --success-bg: rgba(76,175,125,0.12);
+    --success-text: #6fcc9e;
+    --warning-bg: rgba(234,179,8,0.12);
+    --warning-text: #c9a227;
+    --danger: #e05252;
+    --danger-bg: rgba(224,82,82,0.12);
+    --danger-text: #e07070;
+    --radius: 8px;
+    --font: 'Inter', system-ui, sans-serif;
+    --mono: 'JetBrains Mono', monospace;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: var(--font);
+    background: var(--bg);
+    color: var(--text-primary);
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+  }
+
+  header {
+    border-bottom: 0.5px solid var(--border);
+    padding: 14px 24px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    position: sticky;
+    top: 0;
+    background: var(--bg);
+    z-index: 10;
+  }
+
+  .logo {
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--text-primary);
+    letter-spacing: -0.01em;
+  }
+  .logo span { color: var(--accent-text); }
+
+  .progress-wrap { display: flex; gap: 4px; flex: 1; max-width: 320px; margin: 0 24px; }
+  .p-step { flex: 1; height: 2px; background: var(--border-strong); border-radius: 2px; transition: background 0.3s; }
+  .p-step.done { background: var(--accent); }
+  .p-step.active { background: var(--accent); opacity: 0.45; }
+
+  .step-label { font-size: 12px; color: var(--text-muted); }
+
+  main { flex: 1; max-width: 680px; margin: 0 auto; padding: 2.5rem 24px 6rem; width: 100%; }
+
+  .phase-eyebrow { font-size: 11px; letter-spacing: 0.08em; text-transform: uppercase; color: var(--text-muted); margin-bottom: 6px; }
+  .phase-title { font-size: 26px; font-weight: 600; color: var(--text-primary); margin-bottom: 8px; letter-spacing: -0.02em; }
+  .phase-desc { font-size: 14px; color: var(--text-secondary); line-height: 1.65; margin-bottom: 2rem; }
+
+  .field { margin-bottom: 1.25rem; }
+  .field label { display: block; font-size: 12px; font-weight: 500; color: var(--text-muted); margin-bottom: 6px; letter-spacing: 0.02em; text-transform: uppercase; }
+  .field input, .field textarea, .field select {
+    width: 100%; padding: 9px 12px; font-size: 14px;
+    background: var(--surface-2); color: var(--text-primary);
+    border: 0.5px solid var(--border-strong); border-radius: var(--radius);
+    font-family: var(--font); outline: none; transition: border-color 0.2s;
+  }
+  .field input:focus, .field textarea:focus, .field select:focus { border-color: var(--accent); }
+  .field textarea { resize: vertical; min-height: 80px; line-height: 1.55; }
+  .field select option { background: var(--surface-2); }
+  .hint { font-size: 11px; color: var(--text-muted); margin-top: 5px; }
+
+  .two-col { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+  @media (max-width: 520px) { .two-col { grid-template-columns: 1fr; } }
+
+  .platform-toggles { display: flex; gap: 8px; flex-wrap: wrap; }
+  .platform-toggle {
+    padding: 6px 16px; border: 0.5px solid var(--border-strong);
+    border-radius: 20px; cursor: pointer; font-size: 13px;
+    background: var(--surface-2); color: var(--text-secondary);
+    transition: all 0.2s; user-select: none;
+  }
+  .platform-toggle.on { background: var(--accent-bg); color: var(--accent-text); border-color: var(--accent-border); }
+
+  .tag-row { display: flex; gap: 8px; }
+  .tag-row input { flex: 1; }
+  .tag-list { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 8px; min-height: 12px; }
+  .tag {
+    display: inline-flex; align-items: center; gap: 5px;
+    padding: 3px 10px; background: var(--accent-bg);
+    color: var(--accent-text); border-radius: 20px; font-size: 12px;
+    border: 0.5px solid var(--accent-border);
+  }
+  .tag button { background: none; border: none; cursor: pointer; color: var(--accent-text); font-size: 15px; line-height: 1; padding: 0; display: flex; align-items: center; }
+
+  .ai-btn {
+    display: inline-flex; align-items: center; gap: 7px;
+    padding: 8px 16px; font-size: 13px;
+    background: var(--pro-bg); color: var(--pro-text);
+    border: 0.5px solid var(--pro-border); border-radius: var(--radius);
+    cursor: pointer; font-family: var(--font); transition: opacity 0.2s;
+  }
+  .ai-btn:hover { opacity: 0.8; }
+  .ai-btn.loading { opacity: 0.5; pointer-events: none; }
+  .ai-btn.secondary { background: var(--surface-2); color: var(--text-secondary); border-color: var(--border-strong); }
+
+  .ai-result {
+    margin-top: 1rem; padding: 1rem 1.25rem;
+    background: var(--surface-1); border: 0.5px solid var(--border);
+    border-radius: 12px;
+  }
+  .ai-result h4 { font-size: 11px; font-weight: 500; color: var(--text-muted); margin-bottom: 10px; text-transform: uppercase; letter-spacing: 0.05em; }
+
+  .suggestion-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(160px, 1fr)); gap: 8px; }
+  .suggestion-card {
+    padding: 12px; background: var(--surface-2);
+    border: 0.5px solid var(--border-strong); border-radius: var(--radius);
+    cursor: pointer; transition: border-color 0.2s;
+  }
+  .suggestion-card:hover { border-color: var(--accent-border); }
+  .suggestion-card.selected { border-color: var(--accent); background: var(--accent-bg); }
+  .card-title { font-size: 13px; font-weight: 500; color: var(--text-primary); }
+  .card-sub { font-size: 11px; color: var(--text-muted); margin-top: 3px; }
+  .card-promise { font-size: 11px; color: var(--text-secondary); margin-top: 6px; line-height: 1.4; }
+
+  .divider { border: none; border-top: 0.5px solid var(--border); margin: 1.75rem 0; }
+
+  .post-list { display: flex; flex-direction: column; gap: 8px; }
+  .post-card {
+    background: var(--surface-2); border: 0.5px solid var(--border);
+    border-radius: var(--radius); padding: 12px 14px;
+  }
+  .post-card .day { font-size: 11px; color: var(--text-muted); margin-bottom: 5px; }
+  .post-card .text { font-size: 13px; color: var(--text-primary); line-height: 1.6; white-space: pre-wrap; }
+  .post-copy { float: right; background: none; border: 0.5px solid var(--border); border-radius: 4px; padding: 2px 8px; font-size: 11px; color: var(--text-muted); cursor: pointer; }
+  .post-copy:hover { color: var(--text-primary); }
+
+  .token-row { display: flex; gap: 8px; align-items: center; }
+  .token-row input { flex: 1; font-family: var(--mono); font-size: 12px; }
+  .dot { width: 8px; height: 8px; border-radius: 50%; background: var(--border-strong); flex-shrink: 0; transition: background 0.3s; }
+  .dot.ok { background: var(--success); }
+  .dot.err { background: var(--danger); }
+
+  .summary-box {
+    background: var(--surface-1); border: 0.5px solid var(--border);
+    border-radius: 12px; padding: 1.25rem; margin-bottom: 1rem;
+  }
+  .summary-box h3 { font-size: 12px; font-weight: 500; color: var(--text-muted); margin-bottom: 12px; text-transform: uppercase; letter-spacing: 0.05em; }
+  .s-row { display: flex; justify-content: space-between; align-items: baseline; font-size: 13px; padding: 5px 0; border-bottom: 0.5px solid var(--border); }
+  .s-row:last-child { border: none; }
+  .s-row .k { color: var(--text-muted); }
+  .s-row .v { color: var(--text-primary); font-weight: 500; max-width: 65%; text-align: right; word-break: break-word; }
+
+  .notice {
+    display: flex; align-items: flex-start; gap: 10px;
+    padding: 10px 14px; border-radius: var(--radius);
+    font-size: 13px; margin-bottom: 1.25rem;
+  }
+  .notice.warning { background: var(--warning-bg); color: var(--warning-text); }
+  .notice.success { background: var(--success-bg); color: var(--success-text); }
+  .notice.danger { background: var(--danger-bg); color: var(--danger-text); }
+
+  .copy-block {
+    background: var(--surface-1); border: 0.5px solid var(--border);
+    border-radius: var(--radius); padding: 12px 14px;
+    font-family: var(--mono); font-size: 11px; color: var(--text-secondary);
+    white-space: pre-wrap; word-break: break-all; position: relative;
+  }
+  .copy-block-btn {
+    position: absolute; top: 8px; right: 8px;
+    padding: 3px 10px; font-size: 11px;
+    background: var(--surface-3); border: 0.5px solid var(--border-strong);
+    border-radius: 4px; cursor: pointer; color: var(--text-muted);
+  }
+  .copy-block-btn:hover { color: var(--text-primary); }
+
+  .next-steps { display: flex; flex-direction: column; gap: 8px; }
+  .next-step {
+    display: flex; gap: 12px; padding: 12px 14px;
+    background: var(--surface-1); border: 0.5px solid var(--border);
+    border-radius: var(--radius);
+  }
+  .step-num {
+    width: 24px; height: 24px; border-radius: 50%;
+    background: var(--accent-bg); color: var(--accent-text);
+    display: flex; align-items: center; justify-content: center;
+    font-size: 11px; font-weight: 600; flex-shrink: 0;
+  }
+  .step-info .t { font-size: 13px; font-weight: 500; color: var(--text-primary); }
+  .step-info .d { font-size: 12px; color: var(--text-muted); margin-top: 2px; }
+
+  footer {
+    position: fixed; bottom: 0; left: 0; right: 0;
+    background: var(--bg); border-top: 0.5px solid var(--border);
+    padding: 14px 24px; display: flex; justify-content: space-between; align-items: center;
+  }
+  .step-counter { font-size: 12px; color: var(--text-muted); }
+  .btn-row { display: flex; gap: 8px; }
+
+  .btn {
+    padding: 9px 20px; font-size: 14px; font-family: var(--font);
+    border-radius: var(--radius); cursor: pointer;
+    border: 0.5px solid var(--border-strong);
+    background: var(--surface-2); color: var(--text-primary);
+    transition: background 0.15s; font-weight: 500;
+  }
+  .btn:hover { background: var(--surface-3); }
+  .btn.primary { background: var(--accent); color: #fff; border-color: var(--accent); }
+  .btn.primary:hover { opacity: 0.9; }
+  .btn:disabled { opacity: 0.35; pointer-events: none; }
+
+  .spinner {
+    display: inline-block; width: 13px; height: 13px;
+    border: 2px solid currentColor; border-top-color: transparent;
+    border-radius: 50%; animation: spin 0.6s linear infinite;
+  }
+  @keyframes spin { to { transform: rotate(360deg); } }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="logo">Ghost<span>Engine</span> Setup</div>
+  <div class="progress-wrap" id="progressBar"></div>
+  <div class="step-label" id="stepLabel"></div>
+</header>
+
+<main id="main"></main>
+
+<footer>
+  <span class="step-counter" id="stepCounter"></span>
+  <div class="btn-row">
+    <button class="btn" id="btnBack" onclick="prevStep()">Zurück</button>
+    <button class="btn primary" id="btnNext" onclick="nextStep()">Weiter</button>
+  </div>
+</footer>
+
+<script>
+const PROXY = 'gost-ai-proxy.rapid-hill-9abd.workers.dev';
+const N8N   = 'https://n8n.finoro.ch';
+
+const state = {
+  step: 0,
+  niche: '', subNiche: '', slug: '', handle: '', sprache: 'Deutsch',
+  kernversprechen: '', tonalitaet: '',
+  pillars: [], avoidList: [], hashtags: [],
+  freebieTitle: '', ctaHeadline: '', ctaBody: '',
+  hookPrompts: [], logoDesc: '',
+  warmupPosts: [],
+  platforms: ['threads', 'instagram'],
+  tokens: { instagram: '', facebook: '', threads: '', pageToken: '' },
+  ids: { igPageId: '', threadsUserId: '', fbPageId: '' },
+  setupId: '',
+};
+
+const STEPS = [
+  { label: 'Phase 1', title: 'Nische & Identität' },
+  { label: 'Phase 2', title: 'Inhaltsstrategie' },
+  { label: 'Phase 3', title: 'CTA & Freebie' },
+  { label: 'Phase 4', title: 'Visuelle Assets' },
+  { label: 'Phase 5', title: 'Aufwärm-Posts' },
+  { label: 'Phase 6', title: 'API-Tokens & IDs' },
+  { label: 'Phase 7', title: 'Datenbank-Setup' },
+  { label: 'Phase 8', title: 'Abschluss' },
+];
+
+async function ai(system, user, maxTokens) {
+  const r = await fetch(PROXY, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ system, messages: [{ role: 'user', content: user }], max_tokens: maxTokens || 1200 })
+  });
+  const d = await r.json();
+  return d.content?.[0]?.text || '';
+}
+
+function parseJSON(text) {
+  try {
+    const a = text.indexOf('['), b = text.lastIndexOf(']');
+    const c = text.indexOf('{'), e = text.lastIndexOf('}');
+    if (a !== -1 && b > a) return JSON.parse(text.slice(a, b + 1));
+    if (c !== -1 && e > c) return JSON.parse(text.slice(c, e + 1));
+  } catch {}
+  return null;
+}
+
+function tag(list, val, key) {
+  const v = val.trim();
+  if (v && !state[key].includes(v)) { state[key].push(v); renderTags(list, key); }
+}
+function removeTag(key, i) { state[key].splice(i, 1); renderTags(document.getElementById(key + 'TL'), key); }
+function renderTags(el, key) {
+  if (!el) return;
+  el.innerHTML = state[key].map((t, i) =>
+    `<span class="tag">${t}<button onclick="removeTag('${key}',${i})" aria-label="Entfernen">&times;</button></span>`
+  ).join('');
+}
+
+function togglePlatform(p, el) {
+  const i = state.platforms.indexOf(p);
+  if (i >= 0) state.platforms.splice(i, 1); else state.platforms.push(p);
+  el.classList.toggle('on');
+}
+
+function copyText(txt, btn) {
+  navigator.clipboard.writeText(txt);
+  if (btn) { btn.textContent = 'Kopiert!'; setTimeout(() => btn.textContent = 'Kopieren', 1500); }
+}
+
+function renderProgress() {
+  document.getElementById('progressBar').innerHTML =
+    STEPS.map((s, i) => `<div class="p-step ${i < state.step ? 'done' : i === state.step ? 'active' : ''}"></div>`).join('');
+  document.getElementById('stepLabel').textContent = STEPS[state.step].label;
+  document.getElementById('stepCounter').textContent = `${state.step + 1} / ${STEPS.length}`;
+  document.getElementById('btnBack').style.display = state.step === 0 ? 'none' : '';
+  document.getElementById('btnNext').textContent = state.step === STEPS.length - 1 ? 'Fertig' : 'Weiter';
+}
+
+const saves = [
+  () => {
+    state.niche = v('f_nische'); state.subNiche = v('f_subNiche');
+    state.sprache = v('f_sprache'); state.slug = v('f_slug');
+    state.handle = v('f_handle'); state.kernversprechen = v('f_versprechen');
+    state.tonalitaet = v('f_ton');
+  },
+  () => {},
+  () => { state.freebieTitle = v('f_freebie'); state.ctaHeadline = v('f_ctaHead'); state.ctaBody = v('f_ctaBody'); },
+  () => {
+    state.logoDesc = v('f_logoDesc');
+    state.hookPrompts = (v('f_hookPrompts') || '').split('\n').filter(l => l.trim());
+  },
+  () => {},
+  () => {
+    state.tokens.instagram = v('t_ig'); state.tokens.pageToken = v('t_fbPage');
+    state.tokens.threads = v('t_th');
+    state.ids.threadsUserId = v('i_th'); state.ids.igPageId = v('i_ig'); state.ids.fbPageId = v('i_fb');
+  },
+  () => {},
+  () => {},
+];
+
+function v(id) { const el = document.getElementById(id); return el ? el.value : ''; }
+
+function nextStep() {
+  if (saves[state.step]) saves[state.step]();
+  if (state.step < STEPS.length - 1) { state.step++; render(); }
+}
+function prevStep() {
+  if (saves[state.step]) saves[state.step]();
+  if (state.step > 0) { state.step--; render(); }
+}
+
+const stepHTML = {
+  0: () => `
+    <div class="phase-eyebrow">${STEPS[0].label}</div>
+    <div class="phase-title">${STEPS[0].title}</div>
+    <div class="phase-desc">Definiere den strategischen Rahmen. Claude schlägt Varianten vor — du wählst und passt an.</div>
+    <div class="field"><label>Nische / Oberthema</label><input id="f_nische" value="${state.niche}" placeholder="z.B. Produktivität, Fitness, Finanzen..." /></div>
+    <div class="two-col">
+      <div class="field"><label>Sub-Nische</label><input id="f_subNiche" value="${state.subNiche}" placeholder="z.B. Deep Work, ETF-Sparen..." /></div>
+      <div class="field"><label>Sprache</label><select id="f_sprache"><option value="Deutsch" ${state.sprache==='Deutsch'?'selected':''}>Deutsch</option><option value="Englisch" ${state.sprache==='Englisch'?'selected':''}>Englisch</option></select></div>
+    </div>
+    <button class="ai-btn" id="aiBtn0" onclick="aiNische()"><i class="ti ti-sparkles"></i> Vorschläge generieren</button>
+    <div id="aiRes0"></div>
+    <hr class="divider">
+    <div class="field"><label>Slug <span style="text-transform:none;font-weight:400;color:var(--text-muted)">(URL-Kurzname)</span></label><input id="f_slug" value="${state.slug}" placeholder="z.B. deepwork" /><div class="hint">Kleinbuchstaben, keine Sonderzeichen, kein Leerzeichen</div></div>
+    <div class="field"><label>Handle</label><input id="f_handle" value="${state.handle}" placeholder="@meinhandle" /></div>
+    <div class="field"><label>Kernversprechen</label><input id="f_versprechen" value="${state.kernversprechen}" placeholder="Was bekommt der Follower? (1 Satz)" /></div>
+    <div class="field"><label>Tonalität</label><input id="f_ton" value="${state.tonalitaet}" placeholder="z.B. Direkt, analytisch, ohne Klichés" /></div>
+    <div class="field"><label>Plattformen</label>
+      <div class="platform-toggles">
+        ${['threads','instagram','facebook'].map(p => `<span class="platform-toggle ${state.platforms.includes(p)?'on':''}" onclick="togglePlatform('${p}',this)">${p}</span>`).join('')}
+      </div>
+    </div>`,
+
+  1: () => `
+    <div class="phase-eyebrow">${STEPS[1].label}</div>
+    <div class="phase-title">${STEPS[1].title}</div>
+    <div class="phase-desc">Content-Pillars, Avoid-Liste und Hashtags — Claude schlägt alles vor, du kannst anpassen.</div>
+    <button class="ai-btn" id="aiBtn1" onclick="aiStrategie()"><i class="ti ti-sparkles"></i> Strategie generieren</button>
+    <div id="aiRes1"></div>
+    <hr class="divider">
+    <div class="field"><label>Content-Pillars</label>
+      <div class="tag-row"><input id="pillarInp" placeholder="Säule eingeben..." onkeydown="if(event.key==='Enter'){tag(document.getElementById('pillarsTL'),this.value,'pillars');this.value=''}"/>
+      <button class="btn" onclick="tag(document.getElementById('pillarsTL'),document.getElementById('pillarInp').value,'pillars');document.getElementById('pillarInp').value=''">+</button></div>
+      <div class="tag-list" id="pillarsTL"></div>
+    </div>
+    <div class="field"><label>Avoid-Liste</label>
+      <div class="tag-row"><input id="avoidInp" placeholder="Was nie gepostet werden soll..." onkeydown="if(event.key==='Enter'){tag(document.getElementById('avoidTL'),this.value,'avoidList');this.value=''}"/>
+      <button class="btn" onclick="tag(document.getElementById('avoidTL'),document.getElementById('avoidInp').value,'avoidList');document.getElementById('avoidInp').value=''">+</button></div>
+      <div class="tag-list" id="avoidTL"></div>
+    </div>
+    <div class="field"><label>Hashtags</label>
+      <div class="tag-row"><input id="hashInp" placeholder="#hashtag" onkeydown="if(event.key==='Enter'){tag(document.getElementById('hashTL'),this.value,'hashtags');this.value=''}"/>
+      <button class="btn" onclick="tag(document.getElementById('hashTL'),document.getElementById('hashInp').value,'hashtags');document.getElementById('hashInp').value=''">+</button></div>
+      <div class="tag-list" id="hashTL"></div>
+      <div class="hint">5–15 Hashtags für Post-Captions</div>
+    </div>`,
+
+  2: () => `
+    <div class="phase-eyebrow">${STEPS[2].label}</div>
+    <div class="phase-title">${STEPS[2].title}</div>
+    <div class="phase-desc">Lead-Magnet und Call-to-Action für den letzten Carousel-Slide.</div>
+    <button class="ai-btn" id="aiBtn2" onclick="aiCta()"><i class="ti ti-sparkles"></i> CTA & Freebie vorschlagen</button>
+    <div id="aiRes2"></div>
+    <hr class="divider">
+    <div class="field"><label>Freebie-Titel</label><input id="f_freebie" value="${state.freebieTitle}" placeholder="z.B. 7-Tage Deep Work Starter Kit" /></div>
+    <div class="field"><label>CTA-Headline <span style="text-transform:none;font-weight:400">(max. 4 Wörter)</span></label><input id="f_ctaHead" value="${state.ctaHeadline}" placeholder="z.B. Dein Starter Kit." /></div>
+    <div class="field"><label>CTA-Body</label><textarea id="f_ctaBody" placeholder="Kein Link, kein Hashtag. Endet mit: Link in Bio.">${state.ctaBody}</textarea></div>`,
+
+  3: () => `
+    <div class="phase-eyebrow">${STEPS[3].label}</div>
+    <div class="phase-title">${STEPS[3].title}</div>
+    <div class="phase-desc">Hook-Image-Prompts für Replicate (flux-dev) und Logo-Beschreibung für Canva.</div>
+    <button class="ai-btn" id="aiBtn3" onclick="aiVisuals()"><i class="ti ti-sparkles"></i> Asset-Vorschläge generieren</button>
+    <div id="aiRes3"></div>
+    <hr class="divider">
+    <div class="field"><label>Logo-Beschreibung <span style="text-transform:none;font-weight:400">(für Canva)</span></label><textarea id="f_logoDesc" placeholder="Stil, Farbe, Symbol...">${state.logoDesc}</textarea></div>
+    <div class="field"><label>Hook-Image-Prompts <span style="text-transform:none;font-weight:400">(Englisch, ein Prompt pro Zeile)</span></label>
+      <textarea id="f_hookPrompts" style="min-height:130px" placeholder="golden morning light...">${state.hookPrompts.join('\n')}</textarea>
+      <div class="hint">3–5 Prompts. Immer Englisch. Immer enden mit: no people, no faces, no text, 4k, high quality</div>
+    </div>`,
+
+  4: () => `
+    <div class="phase-eyebrow">${STEPS[4].label}</div>
+    <div class="phase-title">${STEPS[4].title}</div>
+    <div class="phase-desc">14 fertige Posts für die manuelle Aufwärmphase — direkt kopierbereit für Instagram und Threads.</div>
+    <button class="ai-btn" id="aiBtn4" onclick="aiWarmup()"><i class="ti ti-sparkles"></i> 14 Posts generieren</button>
+    <div id="aiRes4">
+      ${state.warmupPosts.length > 0 ? `<div class="post-list" style="margin-top:1rem">${state.warmupPosts.map((p,i) => `
+        <div class="post-card">
+          <div class="day">Tag ${i+1} <button class="post-copy" onclick="copyText(this.closest('.post-card').querySelector('.text').textContent, this)">Kopieren</button></div>
+          <div class="text">${escHtml(p)}</div>
+        </div>`).join('')}</div>` : ''}
+    </div>`,
+
+  5: () => `
+    <div class="phase-eyebrow">${STEPS[5].label}</div>
+    <div class="phase-title">${STEPS[5].title}</div>
+    <div class="phase-desc">Tokens werden verschlüsselt gespeichert. Folge Phase 6.2 der Setup-Anleitung für den Token-Flow.</div>
+    <div class="notice warning"><i class="ti ti-alert-triangle"></i><span>Tokens nie teilen. Diese Seite ist nur für dich bestimmt.</span></div>
+    <div class="field"><label>Instagram Access Token (60 Tage)</label>
+      <div class="token-row"><input id="t_ig" type="password" value="${state.tokens.instagram}" placeholder="EAANi..." /><div class="dot ${state.tokens.instagram?'ok':''}" id="dot_ig"></div></div>
+    </div>
+    <div class="field"><label>Facebook Page Token (nie ablaufend)</label>
+      <div class="token-row"><input id="t_fbPage" type="password" value="${state.tokens.pageToken}" placeholder="EAANi..." /><div class="dot ${state.tokens.pageToken?'ok':''}" id="dot_fbPage"></div></div>
+    </div>
+    <div class="field"><label>Threads Access Token (60 Tage)</label>
+      <div class="token-row"><input id="t_th" type="password" value="${state.tokens.threads}" placeholder="THR..." /><div class="dot ${state.tokens.threads?'ok':''}" id="dot_th"></div></div>
+    </div>
+    <hr class="divider">
+    <div class="two-col">
+      <div class="field"><label>Threads User ID</label><input id="i_th" value="${state.ids.threadsUserId}" placeholder="123456789" /></div>
+      <div class="field"><label>Instagram Page ID</label><input id="i_ig" value="${state.ids.igPageId}" placeholder="17841..." /></div>
+    </div>
+    <div class="field"><label>Facebook Page ID</label><input id="i_fb" value="${state.ids.fbPageId}" placeholder="525507..." /></div>`,
+
+  6: () => `
+    <div class="phase-eyebrow">${STEPS[6].label}</div>
+    <div class="phase-title">${STEPS[6].title}</div>
+    <div class="phase-desc">Alle Daten werden direkt in die Ghost Engine Datenbank geschrieben.</div>
+    <div class="summary-box">
+      <h3>Zusammenfassung</h3>
+      ${[['Slug', state.slug||'—'],['Handle', state.handle||'—'],['Nische', state.niche||'—'],['Sub-Nische', state.subNiche||'—'],['Plattformen', state.platforms.join(', ')],['Pillars', state.pillars.length + ' definiert'],['Tokens', [state.tokens.instagram,state.tokens.pageToken,state.tokens.threads].filter(Boolean).length + '/3']].map(([k,v]) => `<div class="s-row"><span class="k">${k}</span><span class="v">${v}</span></div>`).join('')}
+    </div>
+    ${state.setupId ? `<div class="notice success"><i class="ti ti-check"></i><span>Setup eingetragen. ID: <code>${state.setupId}</code></span></div>` : ''}
+    <button class="btn primary" id="dbBtn" onclick="dbEintragen()" ${state.setupId?'disabled':''}>
+      ${state.setupId ? '✓ Eingetragen' : 'Setup in Datenbank eintragen'}
+    </button>
+    <div id="dbRes"></div>
+    <hr class="divider">
+    <div style="font-size:12px;color:var(--text-muted);margin-bottom:8px">SQL-Fallback (manuell ausführen falls Webhook nicht verfügbar)</div>
+    <div class="copy-block" id="sqlBlock">${generateSQL()}<button class="copy-block-btn" onclick="copyText(document.getElementById('sqlBlock').innerText.replace('Kopieren','').trim(), this)">Kopieren</button></div>`,
+
+  7: () => `
+    <div class="phase-eyebrow">${STEPS[7].label}</div>
+    <div class="phase-title">${STEPS[7].title}</div>
+    <div class="phase-desc">Setup konfiguriert. Hier sind die manuellen nächsten Schritte.</div>
+    <div class="summary-box">
+      <h3>Setup-Übersicht</h3>
+      ${[['Setup-ID', state.setupId||'⏳ Ausstehend'],['Slug', state.slug],['Handle', state.handle],['Plattformen', state.platforms.join(', ')]].map(([k,v])=>`<div class="s-row"><span class="k">${k}</span><span class="v">${v}</span></div>`).join('')}
+    </div>
+    <div class="next-steps">
+      ${[
+        ['1','Assets erstellen','Logo PNG 500×500 und Background JPEG 1080×1350 in Canva'],
+        ['2','GitHub Upload',`finoro-assets/${state.slug||'{slug}'}/assets/ — logo.png + background.jpg`],
+        ['3','Landingpage',`finoro-pages/${state.slug||'{slug}'}/index.html erstellen und in main pushen`],
+        ['4','Accounts & Facebook Page','Instagram Business erstellen + FB Page via Meta Business Suite'],
+        ['5','Aufwärm-Posts posten','14 generierte Posts täglich manuell veröffentlichen'],
+        ['6','Ghost Engine aktivieren','WF-01 Planner manuell triggern nach Aufwärmphase (14+ Tage)'],
+      ].map(([n,t,d])=>`<div class="next-step"><div class="step-num">${n}</div><div class="step-info"><div class="t">${t}</div><div class="d">${d}</div></div></div>`).join('')}
+    </div>`
+};
+
+function generateSQL() {
+  const slug = state.slug || '{slug}';
+  const niche = state.niche || '{nische}';
+  const sub = state.subNiche || '{sub_nische}';
+  return `-- Schritt 1: Setup registrieren
+INSERT INTO setups (id, slug, niche, sub_niche, status)
+VALUES (gen_random_uuid(), '${slug}', '${niche}', '${sub}', 'ACTIVE')
+RETURNING id, slug;
+
+-- Schritt 2: setup_id aus RETURNING übernehmen und
+-- setup_configs + vault Einträge gemäss Anleitung Phase 7 eintragen.`;
+}
+
+function escHtml(t) { return t.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
+
+function render() {
+  renderProgress();
+  document.getElementById('main').innerHTML = stepHTML[state.step]();
+  const tagMap = { pillarsTL: 'pillars', avoidTL: 'avoidList', hashTL: 'hashtags' };
+  Object.entries(tagMap).forEach(([id, key]) => { const el = document.getElementById(id); if (el) renderTags(el, key); });
+  window.scrollTo(0, 0);
+}
+
+async function aiNische() {
+  const btn = document.getElementById('aiBtn0');
+  const nische = document.getElementById('f_nische').value;
+  if (!nische) { alert('Bitte Nische eingeben.'); return; }
+  btn.classList.add('loading'); btn.innerHTML = '<span class="spinner"></span> Generiere...';
+  const res = document.getElementById('aiRes0');
+  try {
+    const text = await ai(
+      'Du bist Stratege für Social-Media-Nischen. Antworte nur mit validem JSON, kein Markdown.',
+      `Nische: "${nische}". Sprache: ${document.getElementById('f_sprache').value}. Generiere 3 Varianten: [{"subNiche":"...","slug":"...","handle":"@...","kernversprechen":"...","tonalitaet":"..."}]. slug: lowercase, keine Sonderzeichen.`
+    );
+    const data = parseJSON(text);
+    if (data && Array.isArray(data)) {
+      window._nVars = data;
+      res.innerHTML = `<div class="ai-result"><h4>Varianten — auswählen um zu übernehmen</h4><div class="suggestion-grid">${data.map((d,i)=>`<div class="suggestion-card" onclick="pickNische(${i},this)"><div class="card-title">${d.handle}</div><div class="card-sub">${d.subNiche}</div><div class="card-promise">${d.kernversprechen}</div></div>`).join('')}</div></div>`;
+    }
+  } catch(e) { res.innerHTML = `<div style="color:var(--danger-text);font-size:13px;margin-top:8px">Fehler: ${e.message}</div>`; }
+  btn.classList.remove('loading'); btn.innerHTML = '<i class="ti ti-sparkles"></i> Vorschläge generieren';
+}
+
+function pickNische(i, el) {
+  document.querySelectorAll('.suggestion-card').forEach(c => c.classList.remove('selected'));
+  el.classList.add('selected');
+  const d = window._nVars[i];
+  ['f_subNiche','f_slug','f_handle','f_versprechen','f_ton'].forEach((id, j) => {
+    const val = [d.subNiche, d.slug, d.handle, d.kernversprechen, d.tonalitaet][j];
+    const el2 = document.getElementById(id); if (el2) el2.value = val;
+  });
+}
+
+async function aiStrategie() {
+  const btn = document.getElementById('aiBtn1');
+  btn.classList.add('loading'); btn.innerHTML = '<span class="spinner"></span> Generiere...';
+  try {
+    const text = await ai(
+      'Content-Stratege. Nur valides JSON, kein Markdown.',
+      `Nische: "${state.niche}", SubNische: "${state.subNiche}", Tonalität: "${state.tonalitaet}", Sprache: "${state.sprache}". Generiere: {"pillars":["...","...","...","..."],"avoidList":["...","...","..."],"hashtags":["#...","#...","#...","#...","#...","#...","#..."]}. 4 Pillars, 3-4 Avoid, 7 Hashtags.`
+    );
+    const d = parseJSON(text);
+    if (d) {
+      if (d.pillars) { state.pillars = d.pillars; renderTags(document.getElementById('pillarsTL'), 'pillars'); }
+      if (d.avoidList) { state.avoidList = d.avoidList; renderTags(document.getElementById('avoidTL'), 'avoidList'); }
+      if (d.hashtags) { state.hashtags = d.hashtags; renderTags(document.getElementById('hashTL'), 'hashtags'); }
+      document.getElementById('aiRes1').innerHTML = `<div class="ai-result" style="margin-top:0.75rem"><span style="font-size:12px;color:var(--success-text)"><i class="ti ti-check"></i> Strategie übernommen — oben anpassen falls nötig.</span></div>`;
+    }
+  } catch(e) { document.getElementById('aiRes1').innerHTML = `<div style="color:var(--danger-text);font-size:13px;margin-top:8px">Fehler: ${e.message}</div>`; }
+  btn.classList.remove('loading'); btn.innerHTML = '<i class="ti ti-sparkles"></i> Strategie generieren';
+}
+
+async function aiCta() {
+  const btn = document.getElementById('aiBtn2');
+  btn.classList.add('loading'); btn.innerHTML = '<span class="spinner"></span> Generiere...';
+  try {
+    const text = await ai(
+      'Content-Stratege für Social Media. Nur valides JSON.',
+      `Nische: "${state.niche}", SubNische: "${state.subNiche}", Sprache: "${state.sprache}", Pillars: ${JSON.stringify(state.pillars)}. Generiere: {"freebieTitle":"...","ctaHeadline":"... (max 4 Wörter)","ctaBody":"... (endet mit: Link in Bio.)"}`
+    );
+    const d = parseJSON(text);
+    if (d) {
+      if (d.freebieTitle) document.getElementById('f_freebie').value = d.freebieTitle;
+      if (d.ctaHeadline) document.getElementById('f_ctaHead').value = d.ctaHeadline;
+      if (d.ctaBody) document.getElementById('f_ctaBody').value = d.ctaBody;
+      document.getElementById('aiRes2').innerHTML = `<div class="ai-result" style="margin-top:0.75rem"><span style="font-size:12px;color:var(--success-text)"><i class="ti ti-check"></i> Übernommen.</span></div>`;
+    }
+  } catch(e) { document.getElementById('aiRes2').innerHTML = `<div style="color:var(--danger-text);font-size:13px;margin-top:8px">Fehler: ${e.message}</div>`; }
+  btn.classList.remove('loading'); btn.innerHTML = '<i class="ti ti-sparkles"></i> CTA & Freebie vorschlagen';
+}
+
+async function aiVisuals() {
+  const btn = document.getElementById('aiBtn3');
+  btn.classList.add('loading'); btn.innerHTML = '<span class="spinner"></span> Generiere...';
+  try {
+    const text = await ai(
+      'Visual-Stratege für Social Media. Nur valides JSON.',
+      `Nische: "${state.niche}", SubNische: "${state.subNiche}", Tonalität: "${state.tonalitaet}". Generiere: {"logoDesc":"Canva-Logo Beschreibung (Stil, Farben, Symbol)","hookPrompts":["englischer flux-dev Prompt 1 — endet mit: no people, no faces, no text, 4k, high quality","Prompt 2","Prompt 3","Prompt 4"]}`
+    );
+    const d = parseJSON(text);
+    if (d) {
+      if (d.logoDesc) document.getElementById('f_logoDesc').value = d.logoDesc;
+      if (d.hookPrompts) document.getElementById('f_hookPrompts').value = d.hookPrompts.join('\n');
+      document.getElementById('aiRes3').innerHTML = `<div class="ai-result" style="margin-top:0.75rem"><span style="font-size:12px;color:var(--success-text)"><i class="ti ti-check"></i> Übernommen.</span></div>`;
+    }
+  } catch(e) { document.getElementById('aiRes3').innerHTML = `<div style="color:var(--danger-text);font-size:13px;margin-top:8px">Fehler: ${e.message}</div>`; }
+  btn.classList.remove('loading'); btn.innerHTML = '<i class="ti ti-sparkles"></i> Asset-Vorschläge generieren';
+}
+
+async function aiWarmup() {
+  const btn = document.getElementById('aiBtn4');
+  btn.classList.add('loading'); btn.innerHTML = '<span class="spinner"></span> Generiere 14 Posts...';
+  document.getElementById('aiRes4').innerHTML = '<div style="font-size:13px;color:var(--text-muted);padding:1rem 0">Generiere Posts — dauert einen Moment...</div>';
+  try {
+    const text = await ai(
+      'Content-Creator für Social Media. Nur valides JSON-Array, kein Markdown.',
+      `Erstelle exakt 14 Aufwärm-Posts für Instagram/Threads. Nische: "${state.niche}", Tonalität: "${state.tonalitaet}", Sprache: "${state.sprache}". Pillars: ${JSON.stringify(state.pillars)}. Avoid: ${JSON.stringify(state.avoidList)}. Hashtags (5-7 pro Post): ${state.hashtags.join(' ')}. Format: ["Post 1 Text mit Hashtags", "Post 2...", ...] — genau 14 Strings. Direkt, konkret, kein Kliché.`,
+      1800
+    );
+    const d = parseJSON(text);
+    if (d && Array.isArray(d)) {
+      state.warmupPosts = d.slice(0, 14);
+      document.getElementById('aiRes4').innerHTML = `<div class="post-list" style="margin-top:1rem">${state.warmupPosts.map((p,i) => `
+        <div class="post-card">
+          <div class="day">Tag ${i+1} <button class="post-copy" onclick="copyText(this.closest('.post-card').querySelector('.text').textContent, this)">Kopieren</button></div>
+          <div class="text">${escHtml(p)}</div>
+        </div>`).join('')}</div>`;
+    }
+  } catch(e) { document.getElementById('aiRes4').innerHTML = `<div style="color:var(--danger-text);font-size:13px">Fehler: ${e.message}</div>`; }
+  btn.classList.remove('loading'); btn.innerHTML = '<i class="ti ti-sparkles"></i> 14 Posts generieren';
+}
+
+async function dbEintragen() {
+  const btn = document.getElementById('dbBtn');
+  btn.disabled = true; btn.innerHTML = '<span class="spinner"></span> Wird eingetragen...';
+  try {
+    const resp = await fetch(`${N8N}/webhook/ghost-setup`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        slug: state.slug, niche: state.niche, subNiche: state.subNiche,
+        kernversprechen: state.kernversprechen, tonalitaet: state.tonalitaet,
+        sprache: state.sprache, pillars: state.pillars, avoidList: state.avoidList,
+        hashtags: state.hashtags.join(' '), freebieTitle: state.freebieTitle,
+        ctaHeadline: state.ctaHeadline, ctaBody: state.ctaBody,
+        hookPrompts: state.hookPrompts, platforms: state.platforms,
+        tokens: state.tokens, ids: state.ids,
+      })
+    });
+    const data = await resp.json();
+    if (data.setupId) {
+      state.setupId = data.setupId;
+      document.getElementById('dbRes').innerHTML = `<div class="notice success" style="margin-top:1rem"><i class="ti ti-check"></i><span>Eingetragen. Setup-ID: <code>${data.setupId}</code></span></div>`;
+      btn.innerHTML = '✓ Eingetragen';
+    } else throw new Error(data.error || 'Kein setupId');
+  } catch(e) {
+    document.getElementById('dbRes').innerHTML = `<div class="notice danger" style="margin-top:1rem"><i class="ti ti-alert-circle"></i><span>Fehler: ${e.message} — SQL-Block unten für manuellen Eintrag verwenden.</span></div>`;
+    btn.disabled = false; btn.innerHTML = 'Erneut versuchen';
+  }
+}
+
+render();
+</script>
+</body>
+</html>
