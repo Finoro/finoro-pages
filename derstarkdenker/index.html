@@ -402,6 +402,10 @@
     letter-spacing: 0.1em;
   }
 
+
+  /* Honeypot */
+  .hp-field { position: absolute; left: -9999px; opacity: 0; height: 0; overflow: hidden; }
+
   /* ── ANIMATIONS ───────────────────────── */
   @keyframes fadeUp {
     from { opacity: 0; transform: translateY(20px); }
@@ -451,6 +455,7 @@
     <div class="form-label">Deine E-Mail-Adresse</div>
     <div class="input-row">
       <input type="email" id="email-input" placeholder="du@beispiel.de" autocomplete="email">
+      <input type="text" id="hp-website" name="website" class="hp-field" tabindex="-1" autocomplete="off">
       <button class="btn-submit" onclick="handleSubmit()">Jetzt holen</button>
     </div>
     <div class="form-fine">Kein Spam. Kein Verkauf. Nur Klarheit.</div>
@@ -583,7 +588,7 @@ async function submitEmail(email, formEl) {
     await fetch(WEBHOOK_URL, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ email: email.trim().toLowerCase(), slug: SLUG })
+      body: JSON.stringify({ email: email.trim().toLowerCase(), slug: SLUG, website: document.getElementById('hp-website').value })
     });
 
     formEl.innerHTML = `
