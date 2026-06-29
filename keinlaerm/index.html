@@ -424,6 +424,10 @@
     letter-spacing: 0.1em;
   }
 
+
+  /* Honeypot — für Menschen unsichtbar */
+  .hp-field { position: absolute; left: -9999px; opacity: 0; height: 0; overflow: hidden; }
+
   /* ── ANIMATIONS ───────────────────────── */
   @keyframes fadeUp {
     from { opacity: 0; transform: translateY(20px); }
@@ -472,6 +476,7 @@
     <div class="form-label">Deine E-Mail-Adresse</div>
     <div class="input-row">
       <input type="email" id="email-input" placeholder="du@beispiel.de" autocomplete="email">
+      <input type="text" id="hp-website" name="website" class="hp-field" tabindex="-1" autocomplete="off">
       <button class="btn-submit" onclick="handleSubmit()">Jetzt holen</button>
     </div>
     <div class="form-fine">Kein Spam. Kein Verkauf. Nur Signal.</div>
@@ -588,7 +593,7 @@
 
 <script>
 // ── Config ─────────────────────────────────────────────────
-const WEBAPP_URL = 'https://script.google.com/macros/s/AKfycbx19_5Fvsu_uGDWiLCZlhW0yeUfL0I6uHTmxQkrRMGqLGqdVblHTXVCxY67ZteSD3wh/exec';   // nach GAS-Deploy eintragen
+const N8N_WEBHOOK = 'https://n8n.finoro.ch/webhook/lead-eingang';   // nach GAS-Deploy eintragen
 
 // ── Core submit function ─────────────────────────────────────
 async function submitEmail(email, inputEl, formEl) {
@@ -607,13 +612,13 @@ async function submitEmail(email, inputEl, formEl) {
 
   try {
     // GAS Web Apps erfordern no-cors — kein Response-Body verfügbar
-    await fetch(WEBAPP_URL, {
+    await fetch(N8N_WEBHOOK, {
       method : 'POST',
-      mode   : 'no-cors',
       headers: { 'Content-Type': 'application/json' },
       body   : JSON.stringify({
-        email : email.trim().toLowerCase(),
-        source: window.location.href
+        email   : email.trim().toLowerCase(),
+        slug    : 'keinlaerm',
+        website : document.getElementById('hp-website').value
       })
     });
 
