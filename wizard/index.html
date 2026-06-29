@@ -262,8 +262,9 @@
 </footer>
 
 <script>
-const PROXY = 'gost-ai-proxy.rapid-hill-9abd.workers.dev';
-const N8N   = 'https://n8n.finoro.ch';
+const PROXY = 'https://ghost-ai-proxy.finoro.workers.dev';
+const N8N            = 'https://n8n.finoro.ch';
+const WEBHOOK_SECRET = 'bd68e16bf698a3da75921895caddef0349c010a67771125f8a585cb2a622e3f3';
 
 const state = {
   step: 0,
@@ -293,7 +294,7 @@ const STEPS = [
 async function ai(system, user, maxTokens) {
   const r = await fetch(PROXY, {
     method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
+    headers: { 'Content-Type': 'application/json', 'X-Webhook-Secret': WEBHOOK_SECRET },
     body: JSON.stringify({ system, messages: [{ role: 'user', content: user }], max_tokens: maxTokens || 1200 })
   });
   const d = await r.json();
@@ -656,7 +657,7 @@ async function dbEintragen() {
   try {
     const resp = await fetch(`${N8N}/webhook/ghost-setup`, {
       method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
+      headers: { 'Content-Type': 'application/json', 'X-Webhook-Secret': WEBHOOK_SECRET },
       body: JSON.stringify({
         slug: state.slug, niche: state.niche, subNiche: state.subNiche,
         kernversprechen: state.kernversprechen, tonalitaet: state.tonalitaet,
