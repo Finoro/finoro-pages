@@ -134,6 +134,72 @@
     font-weight: 400;
   }
 
+  /* Download CTA (freebie) */
+  .download-cta {
+    display: inline-block;
+    background: var(--gold);
+    color: var(--black);
+    padding: 16px 32px;
+    text-decoration: none;
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 11px;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    font-weight: 600;
+  }
+
+  /* Tripwire offer block */
+  .tripwire {
+    border: 1px solid rgba(200,169,110,0.3);
+    padding: 28px 24px;
+    margin-bottom: 40px;
+    text-align: center;
+  }
+
+  .tripwire-label {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 9px;
+    letter-spacing: 0.3em;
+    color: var(--gold);
+    text-transform: uppercase;
+    margin-bottom: 14px;
+  }
+
+  .tripwire-title {
+    font-family: 'Playfair Display', serif;
+    font-size: 20px;
+    font-weight: 700;
+    color: var(--cream);
+    margin-bottom: 10px;
+  }
+
+  .tripwire-desc {
+    font-size: 13px;
+    color: #a09890;
+    line-height: 1.6;
+    margin-bottom: 20px;
+    max-width: 380px;
+    margin-left: auto;
+    margin-right: auto;
+  }
+
+  .tripwire-cta {
+    display: inline-block;
+    border: 1px solid var(--gold);
+    color: var(--gold);
+    padding: 13px 24px;
+    text-decoration: none;
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 11px;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    transition: background 0.2s;
+  }
+
+  .tripwire-cta:hover {
+    background: rgba(200,169,110,0.08);
+  }
+
   /* Social links */
   .social {
     display: flex;
@@ -189,6 +255,7 @@
 <script>
 const params = new URLSearchParams(window.location.search);
 const status = params.get('status') || 'confirmed';
+const leadId = params.get('lid');
 
 const states = {
   confirmed: {
@@ -202,7 +269,8 @@ const states = {
       { n:'03', text: '<strong>Folge uns</strong> — tägliche Impulse auf Threads und Instagram.' }
     ],
     showSocial: true,
-    showDownload: true
+    showDownload: true,
+    showTripwire: true
   },
   already_confirmed: {
     cls     : 'state-already',
@@ -271,11 +339,28 @@ if (s.steps.length > 0) {
 
 const downloadHtml = s.showDownload ? `
   <div style="margin-bottom:32px;">
-    <a href="https://go.finoro.ch/freebie.pdf"
-       style="display:inline-block;background:#c8a96e;color:#080808;padding:16px 32px;
-              text-decoration:none;font-family:'IBM Plex Mono',monospace;font-size:11px;
-              letter-spacing:0.15em;text-transform:uppercase;font-weight:600;">
+    <a href="https://go.finoro.ch/freebie.pdf" class="download-cta">
       Plan herunterladen →
+    </a>
+  </div>
+` : '';
+
+// Tripwire-CTA: client_reference_id wird unten per Script aus ?lid= nachgetragen,
+// falls die Seite mit Lead-Bezug aufgerufen wurde. Ohne ?lid= bleibt der Link
+// funktional (Kauf geht durch), nur ohne automatische Zuordnung zum Lead.
+const tripwireHtml = s.showTripwire ? `
+  <div class="tripwire">
+    <div class="tripwire-label">Für alle, die weitermachen wollen</div>
+    <div class="tripwire-title">Framework 002–005</div>
+    <div class="tripwire-desc">
+      Vier weiterführende Systeme, die genau da ansetzen, wo Framework 001 aufhört:
+      Tiefarbeits-Verteidigung, digitale Umgebungsgestaltung, Stille-Toleranz und der
+      wöchentliche Review, der alles zusammenhält.
+    </div>
+    <a href="https://buy.stripe.com/aFa9ATafAgzs6RbgDncIE01"
+       data-tripwire-link
+       class="tripwire-cta">
+      System-Paket freischalten — CHF 9.00 →
     </a>
   </div>
 ` : '';
@@ -303,10 +388,25 @@ document.getElementById('content').innerHTML = `
   <div class="divider"></div>
   ${stepsHtml}
   ${downloadHtml}
+  ${tripwireHtml}
   ${socialHtml}
   ${backHtml}
   <p class="fine">threads.net/@kein.laerm · instagram.com/kein.laerm</p>
 `;
+
+// Lead-Zuordnung nachtragen: läuft NACH dem innerHTML-Aufbau oben, damit die
+// Elemente im DOM existieren, wenn hier danach gesucht wird.
+if (leadId) {
+  document.querySelectorAll('a[data-tripwire-link]').forEach(function(link) {
+    const url = new URL(link.href);
+    url.searchParams.set('client_reference_id', leadId);
+    link.href = url.toString();
+  });
+
+  document.querySelectorAll('stripe-buy-button').forEach(function(btn) {
+    btn.setAttribute('client-reference-id', leadId);
+  });
+}
 </script>
 
 </body>
